@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presensi Cepat Bartim</title>
+    <!-- Memuat Icon FontAwesome Resmi -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .header h3 { margin: 5px 0; color: #1a1a1a; }
+        .header p { font-size: 13px; color: #666; margin-bottom: 15px; }
+        
+        /* Jam & Tanggal Box */
+        .waktu-container {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .jam-digital {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        .tanggal-digital {
+            font-size: 14px;
+            color: #495057;
+            margin: 5px 0 0 0;
+        }
+
+        .btn-absen {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+            box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+        }
+        .btn-absen:hover {
+            background-color: #218838;
+        }
+        .status-box {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            display: none;
+            text-align: left;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+        .loading { background-color: #e3f2fd; color: #0d47a1; }
+        .success { background-color: #e8f5e9; color: #1b5e20; }
+        .error { background-color: #ffebee; color: #b71c1c; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h3><i class="fa-solid fa-fingerprint" style="color: #007bff;"></i> Presensi Cepat</h3>
+        <p>Endpoint: API Scan 31 - Barito Timur</p>
+    </div>
+
+    <!-- Tampilan Jam dan Tanggal Real-Time -->
+    <div class="waktu-container">
+        <div class="jam-digital" id="txtJam">00:00:00</div>
+        <div class="tanggal-digital" id="txtTanggal">Memuat tanggal...</div>
+    </div>
+
+    <!-- Tombol Kirim Utama -->
+    <button class="btn-absen" id="btnKirim">
+        <i class="fa-solid fa-paper-plane"></i> KIRIM ABSEN SEKARANG
+    </button>
+
+    <!-- Kotak Teks Informasi Respon Server -->
+    <div id="resultStatus" class="status-box"></div>
+</div>
+
+<script>
+    // Sistem Jam dan Tanggal Otomatis di Layar
+    function perbaruiWaktu() {
+        const sekarang = new Date();
+        
+        const jam = String(sekarang.getHours()).padStart(2, '0');
+        const menit = String(sekarang.getMinutes()).padStart(2, '0');
+        const detik = String(sekarang.getSeconds()).padStart(2, '0');
+        document.getElementById('txtJam').innerText = `${jam}:${menit}:${detik}`;
+        
+        const opsiTanggal = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const formatTanggal = sekarang.toLocaleDateString('id-ID', opsiTanggal);
+        document.getElementById('txtTanggal').innerText = formatTanggal;
+    }
+    
+    setInterval(perbaruiWaktu, 1000);
+    perbaruiWaktu();
+
+    // Sistem Penembakan Alamat Endpoint
+    document.getElementById('btnKirim').addEventListener('click', function() {
+        // ALAMAT DITETAPKAN SECARA PASTI KE SCAN 31
+        const apiUrl = 'https://api-absen.baritotimurkab.go.id/public/api/scan/31';
+        const resultBox = document.getElementById('resultStatus');
+        
+        resultBox.style.display = "block";
+        resultBox.className = "status-box loading";
+        resultBox.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menghubungkan ke: ${apiUrl}...`;
+
+        // Menembak alamat URL menggunakan GET murni tanpa token / parameter mengganggu
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json().then(data => ({ status: response.status, body: data })))
+        .then(res => {
+            if (res.status === 200 || res.body.status === "success") {
+                resultBox.className = "status-box success";
+                resultBox.innerHTML = `<i class="fa-solid fa-circle-check"></i> <b>Respon Sukses (200 / Berhasil)!</b><br><br>Isi Balasan Server:<br>${JSON.stringify(res.body, null, 2)}`;
+            } else {
+                resultBox.className = "status-box error";
+                resultBox.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <b>Ditolak Server (Status ${res.status}):</b><br><br>Detail:<br>${JSON.stringify(res.body, null, 2)}`;
+            }
+        })
+        .catch(err => {
+            resultBox.className = "status-box error";
+            resultBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <b>Koneksi Gagal / Terblokir CORS:</b><br>${err.message}<br><br><small>Solusi: Pastikan ekstensi pembuka CORS Anda (seperti 'Allow CORS' atau 'CORS Unblock') sudah dalam posisi AKTIF (Hijau/Menyala) di browser sebelum menekan tombol.</small>`;
+        });
+    });
+</script>
+
+</body>
+</html>

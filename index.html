@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presensi Cepat Bartim</title>
-    <!-- Memuat Icon FontAwesome Resmi -->
+    <!-- Memuat Icon FontAwesome Resmi untuk Simbol Icon -->
     <link rel="stylesheet" href="https://cloudflare.com">
     <style>
+        /* Membuat latar belakang warna-warni bergerak (Animated Gradient) */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBergerak 15s ease infinite;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -17,38 +20,60 @@
             align-items: center;
             height: 100vh;
         }
+
+        /* Efek animasi pergeseran warna latar belakang dan teks */
+        @keyframes gradientBergerak {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Kotak Putih Utama dibuat sedikit transparan agar menyatu dengan latar belakang */
         .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px); /* Efek blur kaca modern */
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
             padding: 30px;
             width: 100%;
-            max-width: 400px;
+            max-width: 450px; /* Diperlebar sedikit agar muat teks tanggal yang lebih besar */
             box-sizing: border-box;
             text-align: center;
         }
+
         .header h3 { margin: 5px 0; color: #1a1a1a; }
         .header p { font-size: 13px; color: #666; margin-bottom: 15px; }
         
         /* Jam & Tanggal Box */
         .waktu-container {
-            background-color: #f8f9fa;
+            background-color: rgba(248, 249, 250, 0.8);
             border: 1px solid #e9ecef;
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 20px;
         }
         .jam-digital {
-            font-size: 28px;
+            font-size: 32px; /* Ukuran jam sedikit diperbesar agar seimbang */
             font-weight: bold;
             color: #007bff;
             letter-spacing: 1px;
             margin: 0;
         }
+        
+        /* Mengubah tanggal dengan font LEBIH BESAR dan GRADASI WARNA BERGERAK */
         .tanggal-digital {
-            font-size: 14px;
-            color: #495057;
-            margin: 5px 0 0 0;
+            font-size: 18px; /* Font lebih besar */
+            font-weight: 800; /* Font sangat tebal agar gradasi terlihat jelas */
+            margin: 10px 0 0 0;
+            letter-spacing: 0.5px;
+            
+            /* Trik CSS untuk membuat teks gradasi warna */
+            background: linear-gradient(-45deg, #ff416c, #ff4b2b, #1a83ff, #00b4db);
+            background-size: 300% 300%;
+            animation: gradientBergerak 8s ease infinite; /* Gradasi teks bergerak */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .btn-absen {
@@ -61,12 +86,18 @@
             border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            transition: background 0.3s;
+            transition: all 0.3s;
             box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
         }
         .btn-absen:hover {
             background-color: #218838;
+            transform: translateY(-2px); /* Efek tombol sedikit naik saat disentuh */
+            box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
         }
+        .btn-absen:active {
+            transform: translateY(0);
+        }
+
         .status-box {
             margin-top: 20px;
             padding: 12px;
@@ -78,9 +109,9 @@
             word-break: break-all;
             white-space: pre-wrap;
         }
-        .loading { background-color: #e3f2fd; color: #0d47a1; }
-        .success { background-color: #e8f5e9; color: #1b5e20; }
-        .error { background-color: #ffebee; color: #b71c1c; }
+        .loading { background-color: #e3f2fd; color: #0d47a1; border-left: 5px solid #007bff; }
+        .success { background-color: #e8f5e9; color: #1b5e20; border-left: 5px solid #28a745; }
+        .error { background-color: #ffebee; color: #b71c1c; border-left: 5px solid #dc3545; }
     </style>
 </head>
 <body>
@@ -88,7 +119,7 @@
 <div class="card">
     <div class="header">
         <h3><i class="fa-solid fa-fingerprint" style="color: #007bff;"></i> Presensi Cepat</h3>
-        <p>Endpoint: API Scan 31 - Barito Timur</p>
+        <p>Endpoint: API Scan  - Barito Timur</p>
     </div>
 
     <!-- Tampilan Jam dan Tanggal Real-Time -->
@@ -126,7 +157,6 @@
 
     // Sistem Penembakan Alamat Endpoint
     document.getElementById('btnKirim').addEventListener('click', function() {
-        // ALAMAT DITETAPKAN SECARA PASTI KE SCAN 31
         const apiUrl = 'https://api-absen.baritotimurkab.go.id/public/api/scan/31';
         const resultBox = document.getElementById('resultStatus');
         
@@ -134,7 +164,7 @@
         resultBox.className = "status-box loading";
         resultBox.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menghubungkan ke: ${apiUrl}...`;
 
-        // Menembak alamat URL menggunakan GET murni tanpa token / parameter mengganggu
+        // Menembak alamat URL menggunakan GET
         fetch(apiUrl, {
             method: 'GET',
             headers: {

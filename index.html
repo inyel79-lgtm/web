@@ -3,103 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pelacak Device ID</title>
+    <title>Tentang Perangkat & Baterai</title>
+    
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            padding: 40px;
-            text-align: center;
+            background-color: #050b14;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
-        .container {
-            background: white;
-            padding: 30px;
+
+        .box-perangkat {
+            background-color: #0c1524;
+            border: 1px solid #1a293d;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            max-width: 500px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        .device-box {
-            background: #eef2f7;
-            padding: 15px;
-            font-family: monospace;
+
+        .header {
+            color: #4da6ff;
+            font-weight: bold;
+            text-transform: uppercase;
             font-size: 16px;
-            border: 1px solid #ccd6e0;
-            border-radius: 4px;
-            word-break: break-all;
-            margin: 20px 0;
-            color: #333;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
         }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
+
+        .baris {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
             font-size: 14px;
-            border-radius: 4px;
-            cursor: pointer;
         }
-        button:hover {
-            background-color: #0056b3;
+
+        .label {
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        .nilai {
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .warna-biru {
+            color: #38bdf8;
+        }
+
+        .warna-hijau {
+            color: #10b981;
+        }
+
+        .badge-hp {
+            background-color: #059669;
+            color: #ffffff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 8px;
+            font-style: normal;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Informasi Perangkat Anda</h2>
-    <p>Berikut adalah Device ID unik yang terdaftar untuk browser ini:</p>
-    
-    <!-- Tempat menampilkan Device ID -->
-    <div id="device-id-display" class="device-box">Memuat Device ID...</div>
-    
-    <button onclick="salinDeviceID()">Salin Device ID</button>
-</div>
+    <div class="box-perangkat">
+        <div class="header">
+            <span>📱 TENTANG PERANGKAT</span>
+            <span>▲</span>
+        </div>
 
-<script>
-    // Fungsi untuk membuat string acak (UUID v4 sederhana) sebagai Device ID
-    function generateDeviceID() {
-        return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0, 
-                v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
+        <div class="baris">
+            <span class="label">Tipe Perangkat</span>
+            <span class="nilai"><span class="badge-hp">📱 HP</span> <span id="tipe">Smartphone / HP</span></span>
+        </div>
 
-    // Fungsi utama untuk memeriksa dan mengambil Device ID
-    function inisialisasiDevice() {
-        // Coba ambil Device ID yang sudah tersimpan di browser
-        let deviceId = localStorage.getItem('my_app_device_id');
-        
-        // Jika belum ada, buat baru dan simpan
-        if (!deviceId) {
-            deviceId = generateDeviceID();
-            localStorage.setItem('my_app_device_id', deviceId);
-            console.log("🆕 Device ID baru berhasil dibuat!");
+        <div class="baris">
+            <span class="label">Model Perangkat</span>
+            <span class="nilai" id="model" style="text-transform: uppercase;">Mencari...</span>
+        </div>
+
+        <div class="baris">
+            <span class="label">Versi Sistem Android</span>
+            <span class="nilai warna-biru" id="os">Mencari...</span>
+        </div>
+
+        <div class="baris">
+            <span class="label">Resolusi Layar HP</span>
+            <span class="nilai warna-biru" id="resolusi">Mencari...</span>
+        </div>
+
+        <div class="baris">
+            <span class="label">Status Baterai</span>
+            <span class="nilai warna-hijau" id="baterai">Mencari...</span>
+        </div>
+
+        <div class="baris">
+            <span class="label">Mode Orientasi Default</span>
+            <span class="nilai warna-biru" id="orientasi">Mencari...</span>
+        </div>
+    </div>
+
+    <script>
+        // Mengambil teks data mentah browser (User Agent)
+        const ua = navigator.userAgent;
+
+        // 1. DETEKSI TIPE PERANGKAT & OS MENGGUNAKAN JAVASCRIPT MURNI
+        let modelHP = "Tidak Diketahui";
+        let sistemOperasi = "Bukan Android / OS Lain";
+
+        if (/Android/i.test(ua)) {
+            // Memotong string untuk mengambil versi Android dan Model HP
+            const matchAndroid = ua.match(/Android\s+([^;)]+)/);
+            if (matchAndroid) {
+                sistemOperasi = "Android " + matchAndroid[1];
+            }
+
+            // Ekstraksi model hp dari tanda kurung user agent
+            const bagianDalamKurung = ua.match(/\(([^)]+)\)/);
+            if (bagianDalamKurung) {
+                const strukturData = bagianDalamKurung[1].split(';');
+                if (strukturData.length >= 3) {
+                    modelHP = strukturData[strukturData.length - 1].trim();
+                } else if (strukturData.length === 2) {
+                    modelHP = strukturData[1].trim();
+                }
+            }
+            document.getElementById('tipe').innerText = "Smartphone / HP";
+        } else if (/iPhone|iPad|iPod/i.test(ua)) {
+            sistemOperasi = "iOS / Apple";
+            modelHP = /iPhone/i.test(ua) ? "iPhone" : "iPad";
+            document.getElementById('tipe').innerText = "Smartphone / HP";
         } else {
-            console.log("🔄 Device ID lama dimuat dari penyimpanan.");
+            document.getElementById('tipe').innerText = "Desktop / PC";
+            modelHP = "Komputer / PC";
+            sistemOperasi = /Windows/i.test(ua) ? "Windows" : (/Macintosh/i.test(ua) ? "MacOS" : "Linux");
         }
-        
-        // Tampilkan ke layar HTML
-        document.getElementById('device-id-display').innerText = deviceId;
-        
-        // Tampilkan juga di konsol browser
-        console.log("Device ID: " + deviceId);
-    }
 
-    // Fungsi untuk tombol salin teks
-    function salinDeviceID() {
-        let textToCopy = document.getElementById('device-id-display').innerText;
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            alert("✅ Device ID berhasil disalin!");
-        }).catch(err => {
-            console.error("Gagal menyalin: ", err);
-        });
-    }
+        // Tampilkan ke HTML
+        document.getElementById('model').innerText = modelHP;
+        document.getElementById('os').innerText = sistemOperasi;
 
-    // Jalankan fungsi otomatis saat halaman selesai dimuat
-    window.onload = inisialisasiDevice;
-</script>
+        // 2. DETEKSI RESOLUSI LAYAR
+        const lebarAsli = window.screen.width * (window.devicePixelRatio || 1);
+        const tinggiAsli = window.screen.height * (window.devicePixelRatio || 1);
+        document.getElementById('resolusi').innerText = `${lebarAsli} x ${tinggiAsli} Pixel`;
+
+        // 3. DETEKSI BATERAI
+        if ('getBattery' in navigator) {
+            navigator.getBattery().then(function(battery) {
+                function updateBaterai() {
+                    const level = Math.round(battery.level * 100);
+                    const statusCharge = battery.charging ? "⚡ Sedang Di-charger" : "🔋 Tidak Di-charger";
+                    document.getElementById('baterai').innerText = `${level}% (${statusCharge})`;
+                }
+                updateBaterai();
+                battery.addEventListener('chargingchange', updateBaterai);
+                battery.addEventListener('levelchange', updateBaterai);
+            }).catch(function() {
+                document.getElementById('baterai').innerText = "Izin Baterai Ditolak";
+            });
+        } else {
+            // Cadangan jika browser versi lama / tidak mendukung API Baterai
+            document.getElementById('baterai').innerText = "100% (Akses Terbatas)";
+        }
+
+        // 4. DETEKSI ORIENTASI LAYAR
+        function cekOrientasi() {
+            if (window.innerHeight > window.innerWidth) {
+                document.getElementById('orientasi').innerText = "Portrait (Smartphone)";
+            } else {
+                document.getElementById('orientasi').innerText = "Landscape (Desktop/Tablet)";
+            }
+        }
+        cekOrientasi();
+        window.addEventListener('resize', cekOrientasi);
+    </script>
 
 </body>
 </html>

@@ -1,197 +1,329 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tentang Perangkat & Baterai</title>
-    
-    <style>
-        body {
-            background-color: #050b14;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .box-perangkat {
-            background-color: #0c1524;
-            border: 1px solid #1a293d;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 600px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        .header {
-            color: #4da6ff;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 16px;
-            margin-bottom: 25px;
-            letter-spacing: 1px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .baris {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .label {
-            color: #a0aec0;
-            font-style: italic;
-        }
-
-        .nilai {
-            font-weight: bold;
-            text-align: right;
-        }
-
-        .warna-biru {
-            color: #38bdf8;
-        }
-
-        .warna-hijau {
-            color: #10b981;
-        }
-
-        .badge-hp {
-            background-color: #059669;
-            color: #ffffff;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-right: 8px;
-            font-style: normal;
-        }
-    </style>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Dashboard API ATEI BARTIM - v13</title>
+ <style>
+ body { font-family: sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
+ .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+ h2 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-top: 0; }
+ h3 { color: #34495e; font-size: 16px; margin-top: 20px; border-bottom: 1px dashed #ccc; padding-bottom: 5px; }
+ .form-group { margin-bottom: 15px; }
+ label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+ input[type="text"], input[type="number"] { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; }
+ .row { display: flex; gap: 10px; }
+ .col { flex: 1; }
+ button { width: 100%; padding: 12px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+ .btn-gps-sync { background-color: #3498db; }
+ .btn-location { background-color: #9b59b6; }
+ .btn-checkin { background-color: #2ecc71; }
+ .btn-checkout { background-color: #e67e22; }
+ .btn-info { background-color: #f1c40f; color: #333; }
+ .btn-clear { background-color: #7f8c8d; }
+ .console-log { background: #1e1e1e; color: #39ff14; padding: 15px; border-radius: 6px; height: 250px; overflow-y: auto; font-family: monospace; white-space: pre-wrap; margin-top: 15px; }
+ </style>
 </head>
 <body>
 
-    <div class="box-perangkat">
-        <div class="header">
-            <span>📱 TENTANG PERANGKAT</span>
-            <span>▲</span>
-        </div>
+<div class="container">
+ <h2>🛠️ Dasbor API ATEI BARTIM <span style="font-size:12px; background:#e74c3c; color:#fff; padding:2px 6px; border-radius:3px;">v13 Auto-Fill Profil</span></h2>
+ 
+ <div class="form-group">
+  <label>Bearer Token:</label>
+  <input type="text" id="apiToken" value="419580|YDZ0p6qlok7mURXSu7NOBlg5461R8EWL60wIsf4Z50742568">
+ </div>
 
-        <div class="baris">
-            <span class="label">Tipe Perangkat</span>
-            <span class="nilai"><span class="badge-hp">📱 HP</span> <span id="tipe">Smartphone / HP</span></span>
-        </div>
+ <div class="row">
+  <div class="col form-group">
+   <label>User ID:</label>
+   <input type="number" id="userId" value="2682">
+  </div>
+  <div class="col form-group">
+   <label>ID 31 (Hanya untuk QR):</label>
+   <input type="number" id="id31" value="31">
+  </div>
+ </div>
 
-        <div class="baris">
-            <span class="label">Model Perangkat</span>
-            <span class="nilai" id="model" style="text-transform: uppercase;">Mencari...</span>
-        </div>
+ <h3>👤 Parameter Data Profil Ekstensi (Mendukung Auto-Fill)</h3>
+ <div class="row">
+  <div class="col form-group">
+   <label>Nama:</label>
+   <input type="text" id="profName" value="User Test">
+  </div>
+  <div class="col form-group">
+   <label>Email:</label>
+   <input type="text" id="profEmail" value="user@example.com">
+  </div>
+ </div>
+ <div class="row">
+  <div class="col form-group">
+   <label>NIK:</label>
+   <input type="text" id="profNik" value="6213000000000000">
+  </div>
+  <div class="col form-group">
+   <label>NIP:</label>
+   <input type="text" id="profNip" value="199500000000000000">
+  </div>
+ </div>
+ <div class="row">
+  <div class="col form-group">
+   <label>ID Unit:</label>
+   <input type="number" id="profIdUnit" value="1">
+  </div>
+  <div class="col form-group">
+   <label>Jabatan:</label>
+   <input type="text" id="profJabatan" value="Staf Pelaksana">
+  </div>
+ </div>
 
-        <div class="baris">
-            <span class="label">Versi Sistem Android</span>
-            <span class="nilai warna-biru" id="os">Mencari...</span>
-        </div>
+ <h3>📍 Koordinat Lokasi</h3>
+ <div class="row">
+  <div class="col form-group">
+   <label>Latitude:</label>
+   <input type="text" id="geoLat" value="-2.116357">
+  </div>
+  <div class="col form-group">
+   <label>Longitude:</label>
+   <input type="text" id="geoLong" value="115.16722">
+  </div>
+ </div>
 
-        <div class="baris">
-            <span class="label">Resolusi Layar HP</span>
-            <span class="nilai warna-biru" id="resolusi">Mencari...</span>
-        </div>
+ <div class="form-group">
+  <label>Kode Acak Akhir QR (qr_in / qr_out):</label>
+  <input type="text" id="qrTokenInput" value="" placeholder="Contoh: 4b3b50cf73">
+  <small style="color:#7f8c8d; font-size:11px;">*Tanggal otomatis disisipkan di depan kode ini saat dikirim.</small>
+ </div>
 
-        <div class="baris">
-            <span class="label">Status Baterai</span>
-            <span class="nilai warna-hijau" id="baterai">Mencari...</span>
-        </div>
+ <h3>🚀 Fitur Utama Absensi</h3>
+ <button class="btn-gps-sync" onclick="sinkronisasiGPS()">🔄 Ambil GPS Browser Asli</button>
+ <button class="btn-location" onclick="ujiKirimLokasi()">1. Verifikasi Lokasi (GPS)</button>
+ <button class="btn-checkin" onclick="ujiCheckIn()">2. Absen Masuk (Check-In)</button>
+ <button class="btn-checkout" onclick="ujiCheckOut()">3. Absen Pulang (Check-Out)</button>
 
-        <div class="baris">
-            <span class="label">Mode Orientasi Default</span>
-            <span class="nilai warna-biru" id="orientasi">Mencari...</span>
-        </div>
-    </div>
+ <h3>📊 Data Pendukung & Rekapitulasi</h3>
+ <div class="row">
+  <div class="col"><button class="btn-info" onclick="ambilDataHariIni()">Cek Absen Hari Ini</button></div>
+  <div class="col"><button class="btn-info" onclick="ambilProfilUser()">Cek Profil User</button></div>
+ </div>
+ <div class="row">
+  <div class="col"><button class="btn-info" onclick="ambilRekapUser()">Cek Ringkasan Rekap</button></div>
+  <div class="col"><button class="btn-info" onclick="ambilDataTPP()">Cek Nilai TPP</button></div>
+ </div>
 
-    <script>
-        // Mengambil teks data mentah browser (User Agent)
-        const ua = navigator.userAgent;
+ <button class="btn-clear" onclick="logClear()">Bersihkan Konsol</button>
 
-        // 1. DETEKSI TIPE PERANGKAT & OS MENGGUNAKAN JAVASCRIPT MURNI
-        let modelHP = "Tidak Diketahui";
-        let sistemOperasi = "Bukan Android / OS Lain";
+ <div class="console-log" id="consoleOutput">Siap melakukan pengujian...</div>
+</div>
 
-        if (/Android/i.test(ua)) {
-            // Memotong string untuk mengambil versi Android dan Model HP
-            const matchAndroid = ua.match(/Android\s+([^;)]+)/);
-            if (matchAndroid) {
-                sistemOperasi = "Android " + matchAndroid[1];
-            }
+<script>
+ window.addEventListener('DOMContentLoaded', () => {
+  sinkronisasiGPS(true);
+ });
 
-            // Ekstraksi model hp dari tanda kurung user agent
-            const bagianDalamKurung = ua.match(/\(([^)]+)\)/);
-            if (bagianDalamKurung) {
-                const strukturData = bagianDalamKurung[1].split(';');
-                if (strukturData.length >= 3) {
-                    modelHP = strukturData[strukturData.length - 1].trim();
-                } else if (strukturData.length === 2) {
-                    modelHP = strukturData[1].trim();
-                }
-            }
-            document.getElementById('tipe').innerText = "Smartphone / HP";
-        } else if (/iPhone|iPad|iPod/i.test(ua)) {
-            sistemOperasi = "iOS / Apple";
-            modelHP = /iPhone/i.test(ua) ? "iPhone" : "iPad";
-            document.getElementById('tipe').innerText = "Smartphone / HP";
-        } else {
-            document.getElementById('tipe').innerText = "Desktop / PC";
-            modelHP = "Komputer / PC";
-            sistemOperasi = /Windows/i.test(ua) ? "Windows" : (/Macintosh/i.test(ua) ? "MacOS" : "Linux");
-        }
+ function sinkronisasiGPS(isSilent = false) {
+  if (!navigator.geolocation) {
+   if (!isSilent) cetakLog("[SISTEM] Geolocation tidak didukung.");
+   return;
+  }
+  if (!isSilent) cetakLog("[SISTEM] Meminta koordinat GPS perangkat...");
+  
+  navigator.geolocation.getCurrentPosition(
+   (posisi) => {
+    document.getElementById("geoLat").value = posisi.coords.latitude;
+    document.getElementById("geoLong").value = posisi.coords.longitude;
+    cetakLog(`[SISTEM] GPS Sinkron! Lat: ${posisi.coords.latitude}, Long: ${posisi.coords.longitude}`);
+   },
+   (error) => {
+    if (!isSilent) cetakLog(`[SISTEM ERROR] Gagal sinkronisasi GPS internal browser.`);
+   },
+   { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
+ }
 
-        // Tampilkan ke HTML
-        document.getElementById('model').innerText = modelHP;
-        document.getElementById('os').innerText = sistemOperasi;
+ function dapatkanTanggalSekarang() {
+  const hariIni = new Date();
+  const yyyy = hariIni.getFullYear();
+  let mm = hariIni.getMonth() + 1;
+  let dd = hariIni.getDate();
+  if (dd < 10) dd = '0' + dd;
+  if (mm < 10) mm = '0' + mm;
+  return `${yyyy}-${mm}-${dd}`;
+ }
 
-        // 2. DETEKSI RESOLUSI LAYAR
-        const lebarAsli = window.screen.width * (window.devicePixelRatio || 1);
-        const tinggiAsli = window.screen.height * (window.devicePixelRatio || 1);
-        document.getElementById('resolusi').innerText = `${lebarAsli} x ${tinggiAsli} Pixel`;
+ function cetakLog(teks) {
+  const consoleEl = document.getElementById("consoleOutput");
+  if (consoleEl) {
+   consoleEl.innerText += `
+` + teks;
+   consoleEl.scrollTop = consoleEl.scrollHeight;
+  }
+ }
 
-        // 3. DETEKSI BATERAI
-        if ('getBattery' in navigator) {
-            navigator.getBattery().then(function(battery) {
-                function updateBaterai() {
-                    const level = Math.round(battery.level * 100);
-                    const statusCharge = battery.charging ? "⚡ Sedang Di-charger" : "🔋 Tidak Di-charger";
-                    document.getElementById('baterai').innerText = `${level}% (${statusCharge})`;
-                }
-                updateBaterai();
-                battery.addEventListener('chargingchange', updateBaterai);
-                battery.addEventListener('levelchange', updateBaterai);
-            }).catch(function() {
-                document.getElementById('baterai').innerText = "Izin Baterai Ditolak";
-            });
-        } else {
-            // Cadangan jika browser versi lama / tidak mendukung API Baterai
-            document.getElementById('baterai').innerText = "100% (Akses Terbatas)";
-        }
+ function cetakResponsTeks(awalan, teks) {
+  try {
+   const parsed = JSON.parse(teks);
+   const formatted = JSON.stringify(parsed, null, 2);
+   cetakLog(`${awalan} Respons:\n${formatted}`);
+   return parsed;
+  } catch (e) {
+   cetakLog(`${awalan} Respons:\n${teks}`);
+   return null;
+  }
+ }
 
-        // 4. DETEKSI ORIENTASI LAYAR
-        function cekOrientasi() {
-            if (window.innerHeight > window.innerWidth) {
-                document.getElementById('orientasi').innerText = "Portrait (Smartphone)";
-            } else {
-                document.getElementById('orientasi').innerText = "Landscape (Desktop/Tablet)";
-            }
-        }
-        cekOrientasi();
-        window.addEventListener('resize', cekOrientasi);
-    </script>
+ function logClear() {
+  document.getElementById("consoleOutput").innerText = "Konsol dibersihkan.";
+ }
 
+ function dapatkanHeader() {
+  return {
+   "Content-Type": "application/json",
+   "Accept": "application/json",
+   "user-agent": "Dart/3.9 (dart:io)",
+   "x-install-id": "e5303a18f7513bca6a0fb995d8c8bbf9e3e22a56a0c07ee9",
+   "x-device-platform": "android",
+   "x-app-installer": "com.android.vending",
+   "x-app-package": "com.digitalnative.atei_bartim",
+   "Authorization": "Bearer " + document.getElementById("apiToken").value.trim(),
+   "x-device-id": "40622cf44ad36bb1"
+  };
+ }
+
+ function ujiKirimLokasi() {
+  const uid = parseInt(document.getElementById("userId").value);
+  const lat = document.getElementById("geoLat").value;
+  const long = document.getElementById("geoLong").value;
+  
+  cetakLog("[GPS] Mengirim data lokasi dengan parameter profil...");
+  
+  const payload = { 
+   id: uid, 
+   latitude: lat, 
+   longitude: long,
+   name: document.getElementById("profName").value.trim(),
+   email: document.getElementById("profEmail").value.trim(),
+   nik: document.getElementById("profNik").value.trim(),
+   nip: document.getElementById("profNip").value.trim(),
+   id_unit: parseInt(document.getElementById("profIdUnit").value),
+   jabatan: document.getElementById("profJabatan").value.trim()
+  };
+
+  fetch("https://api-absen.baritotimurkab.go.id/public/api/user/verifikasi_loc", {
+   method: 'POST',
+   headers: dapatkanHeader(),
+   body: JSON.stringify(payload)
+  })
+  .then(r => r.text())
+  .then(d => { cetakResponsTeks(`[GPS]`, d); })
+  .catch(e => { cetakLog(`[ERROR] ${e.message}`); });
+ }
+
+ function ujiCheckIn() {
+  const uid = parseInt(document.getElementById("userId").value);
+  const id31Val = parseInt(document.getElementById("id31").value);
+  let rawToken = document.getElementById("qrTokenInput").value.trim().replace(/^\d{4}-\d{2}-\d{2}/, '');
+  const qrFinal = dapatkanTanggalSekarang() + rawToken;
+  
+  cetakLog(`[CHECK-IN] Mengirim QR: ${qrFinal}`);
+  const payload = { id: uid, id_31: id31Val, qr_in: qrFinal };
+
+  fetch("https://api-absen.baritotimurkab.go.id/public/api/user/qr_in", {
+   method: 'POST',
+   headers: dapatkanHeader(),
+   body: JSON.stringify(payload)
+  })
+  .then(r => r.text())
+  .then(d => { cetakResponsTeks(`[CHECK-IN]`, d); })
+  .catch(e => { cetakLog(`[ERROR] ${e.message}`); });
+ }
+
+ function ujiCheckOut() {
+  const uid = parseInt(document.getElementById("userId").value);
+  const id31Val = parseInt(document.getElementById("id31").value);
+  let rawToken = document.getElementById("qrTokenInput").value.trim().replace(/^\d{4}-\d{2}-\d{2}/, '');
+  const qrFinal = dapatkanTanggalSekarang() + rawToken;
+  
+  cetakLog(`[CHECK-OUT] Mengirim QR: ${qrFinal}`);
+  const payload = { id: uid, id_31: id31Val, qr_out: qrFinal };
+
+  fetch("https://api-absen.baritotimurkab.go.id/public/api/user/qr_out", {
+   method: 'POST',
+   headers: dapatkanHeader(),
+   body: JSON.stringify(payload)
+  })
+  .then(r => r.text())
+  .then(d => { cetakResponsTeks(`[CHECK-OUT]`, d); })
+  .catch(e => { cetakLog(`[ERROR] ${e.message}`); });
+ }
+
+ function ambilDataHariIni() {
+  const uid = parseInt(document.getElementById("userId").value);
+  cetakLog("[FETCH] Mengambil status absen hari ini dengan Payload ID...");
+  
+  const payload = { id: uid };
+
+  fetch("https://api-absen.baritotimurkab.go.id/public/api/user/get_today", {
+   method: 'POST',
+   headers: dapatkanHeader(),
+   body: JSON.stringify(payload)
+  })
+  .then(r => r.text())
+  .then(d => { cetakResponsTeks(`[TODAY]`, d); })
+  .catch(e => { cetakLog(`[ERROR] ${e.message}`); });
+ }
+
+ function ambilProfilUser() {
+  const uid = document.getElementById("userId").value;
+  cetakLog(`[FETCH] Mengambil profil untuk User ID: ${uid}...`);
+  fetch(`https://api-absen.baritotimurkab.go.id/public/api/user/${uid}`, {
+   method: 'GET',
+   headers: dapatkanHeader()
+  })
+  .then(r => r.text())
+  .then(d => { 
+   const json = cetakResponsTeks(`[PROFILE]`, d); 
+   if(json && json.data) {
+     const u = json.data;
+     if(u.name) document.getElementById("profName").value = u.name;
+     if(u.email) document.getElementById("profEmail").value = u.email;
+     if(u.nik) document.getElementById("profNik").value = u.nik;
+     if(u.nip) document.getElementById("profNip").value = u.nip;
+     if(u.id_unit) document.getElementById("profIdUnit").value = u.id_unit;
+     if(u.jabatan) document.getElementById("profJabatan").value = u.jabatan;
+     cetakLog("[SISTEM] Kolom parameter ekstensi berhasil diisi otomatis!");
+   }
+  })
+  .catch(e => { cetakLog(`[ERROR] ${e.message}`); });
+ }
+
+ function ambilRekapUser() {
+  const uid = document.getElementById("userId").value;
+  cetakLog(`[FETCH] Mengambil rekap kehadiran untuk User ID: ${uid}...`);
+  fetch(`https://api-absen.baritotimurkab.go.id/public/api/user/rekap/${uid}`, {
+   method: 'POST',
+   headers: dapatkanHeader()
+  })
+  .then(r => r.text())
+  .then(d => { cetakResponsTeks(`[REKAP]`, d); })
+  .catch(e => { cetakLog(`[ERROR] ${e.message}`); });
+ }
+
+ function ambilDataTPP() {
+  const uid = document.getElementById("userId").value;
+  const hariIni = new Date();
+  const bulan = hariIni.getMonth() + 1; 
+  const tahun = hariIni.getFullYear();
+
+  cetakLog(`[FETCH] Mengambil kalkulasi TPP Periode: ${bulan}/${tahun}...`);
+  fetch(`https://api-absen.baritotimurkab.go.id/public/api/user/get_tpp/${uid}/${bulan}/${tahun}`, {
+   method: 'GET',
+   headers: dapatkanHeader()
+  })
+  .then(r => r.text())
+  .then(d => { cetakResponsTeks(`[TPP]`, d); })
+  .catch(e => { cetakLog(`[ERROR] ${e.message}`); });
+ }
+</script>
 </body>
 </html>
